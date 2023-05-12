@@ -39,13 +39,13 @@ func main() {
 
 	err = filepath.Walk(config.CSVDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return err
+			log.Fatalf("error walking filepath: %s", err)
 		}
 
 		if strings.ToLower(filepath.Ext(path)) == ".csv" {
 			csvFile, err := os.Open(path)
 			if err != nil {
-				return fmt.Errorf("error opening CSV file %s: %s", path, err)
+				log.Fatalf("error opening CSV file %s: %s", path, err)
 			}
 			defer csvFile.Close()
 
@@ -59,7 +59,7 @@ func main() {
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					errorsFile.WriteString(fmt.Sprintf("error reading CSV file %s: %s\n", path, err))
+					log.Fatalf("error reading CSV file %s: %s\n", path, err)
 					break
 				}
 				colNum := 1
@@ -73,7 +73,7 @@ func main() {
 
 			err = xlsx.SaveAs(xlsxFile)
 			if err != nil {
-				errorsFile.WriteString(fmt.Sprintf("error saving XLSX file %s: %s\n", xlsxFile, err))
+				log.Fatalf("error saving XLSX file %s: %s\n", xlsxFile, err)
 			}
 		}
 
